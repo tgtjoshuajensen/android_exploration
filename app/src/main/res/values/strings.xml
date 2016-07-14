@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Frameworktest</string>
+    <string name="no_results">Sorry, no search results found.</string>
+</resources>
