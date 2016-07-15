@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class CustomItemAdapter extends ArrayAdapter<Item>{
     public CustomItemAdapter(Context context, ArrayList<Item> items) {
         super(context, 0, items);
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Item item = getItem(position);
@@ -23,11 +26,12 @@ public class CustomItemAdapter extends ArrayAdapter<Item>{
 
         TextView itemTitle = (TextView) convertView.findViewById(R.id.itemTitle);
         TextView itemPrice = (TextView) convertView.findViewById(R.id.itemPrice);
-        TextView itemImgPath = (TextView) convertView.findViewById(R.id.itemImgPath);
+        CircleImageView imgView = (CircleImageView) convertView.findViewById(R.id.itemImage);
 
+
+        Picasso.with(getContext()).load(item.imgUrl).into(imgView);
         itemTitle.setText(item.title);
         itemPrice.setText(item.price);
-        itemImgPath.setText(item.imgPath);
 
         return convertView;
     }

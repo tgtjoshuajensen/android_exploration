@@ -1,6 +1,5 @@
 package com.target.z00195z.frameworktest;
 
-
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.view.View.OnClickListener;
@@ -15,14 +15,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.view.inputmethod.InputMethodManager;
-
 import java.util.ArrayList;
-
 
 public class MainSearchActivity extends AppCompatActivity {
     EditText mEdit;
     Button mButton;
-    ListView listItem;
+    GridView gridView;
     CustomItemAdapter itemAdapter;
     Handler handler;
 
@@ -32,7 +30,6 @@ public class MainSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_search);
         mEdit = (EditText) findViewById(R.id.SearchField);
         mButton = (Button) findViewById(R.id.SearchButton);
-
         mButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,12 +43,10 @@ public class MainSearchActivity extends AppCompatActivity {
             }
         });
 
-        listItem = (ListView) findViewById(R.id.listItem);
-
-//        set up adapter
+        gridView = (GridView) findViewById(R.id.gridView);
         ArrayList<Item> arrayOfItems = new ArrayList<>();
         itemAdapter = new CustomItemAdapter(MainSearchActivity.this, arrayOfItems);
-        listItem.setAdapter(itemAdapter);
+        gridView.setAdapter(itemAdapter);
 
         updateSearchResults(new PreviousSearch(MainSearchActivity.this).getSearchTerm());
     }
@@ -68,8 +63,25 @@ public class MainSearchActivity extends AppCompatActivity {
         JSONArray products = jObj.getJSONArray("products");
         for (int i=0; i<products.length(); i++) {
             JSONObject item = products.getJSONObject(i);
-            Log.e("title", item.getString("title"));
-            Item newItem = new Item(item.getString("title"), item.getString("tcin"));
+            String title = item.getString("title");
+            String currentPrice = "";
+            String imgUrl = "http://target.scene7.com/is/image/Target/" + item.getString("tcin") + "?wid=475&hei=475";
+            JSONObject onlineInfo = null;
+
+            try {
+                onlineInfo = item.getJSONObject("onlineInfo");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(onlineInfo != null){
+                JSONObject price = onlineInfo.getJSONObject("price");
+                if(price != null){
+                    currentPrice = price.getString("currentPriceText");
+                }
+            }
+
+
+            Item newItem = new Item(title, currentPrice, imgUrl);
             itemAdapter.add(newItem);
         }
     }
